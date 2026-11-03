@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
 <title>XFILES</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style id="xf-style">
@@ -106,6 +106,16 @@ textarea{min-height:130px;resize:vertical;line-height:1.4}
 .ex{border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:2px}
 .ex .es{font-size:13.5px}
 .ctx{margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--dim)}
+.how{margin-top:2px;height:24px;font-size:11px;color:var(--muted)}
+.how:hover{color:var(--ink);border-color:#3a3a3a}
+.card.tall{max-height:min(78vh,620px);overflow:auto}
+.how-list{margin:12px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;counter-reset:h}
+.how-list li{display:grid;grid-template-columns:20px 1fr;gap:8px;color:#c9c9c9;font-size:13px;line-height:1.45;counter-increment:h}
+.how-list li::before{content:counter(h,decimal-leading-zero);font-family:var(--mono);font-size:10px;color:var(--red);padding-top:3px}
+.how-list b{color:var(--ink);font-weight:600}
+.how-notes{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px;font-size:15px;color:var(--ink)}
+.how-notes p{margin:0}
+.how-notes p+p{color:var(--red)}
 .ink-wobble path{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 #add-toggle,#add-form{display:none!important}
 </style>
@@ -115,6 +125,7 @@ textarea{min-height:130px;resize:vertical;line-height:1.4}
     <span class="logo" role="img" aria-label="XFILES logo"></span>
     <h1 class="wordmark" aria-label="XFILES" style="margin-bottom:0"></h1>
     <p class="sig hand">con amor, chini <svg class="ink-wobble" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5c-3-2.4-8.3-6-8.6-10.1C3.2 7.3 5.6 4.6 8.2 5c1.8.3 3 1.9 3.7 3.4.8-1.7 2.2-3.3 4.2-3.5 2.6-.2 4.8 2.4 4.4 5.2-.5 4-5.6 7.6-8.5 10.4"></path></svg></p>
+    <button type="button" class="pill how" id="how">how it works</button>
   </header>
   <div class="search"><label for="q"><svg class="ink-wobble" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.6 4.3c3.5-.1 6.3 2.7 6.2 6.1-.1 3.4-2.9 6-6.3 5.9-3.3-.1-5.9-2.8-5.8-6.2.1-3.2 2.7-5.7 5.9-5.8zM15.2 15.3c1.5 1.4 2.9 2.9 4.4 4.3"></path></svg><input id="q" type="search" placeholder="Find a song or a word" autocomplete="off"></label></div>
   <section>
@@ -203,6 +214,12 @@ function render(){
     return '<li class="song" data-id="'+s.id+'"'+(open?' data-open':'')+'><button type="button" class="song-row" aria-expanded="'+open+'"><span class="n">'+String(i+1).padStart(3,"0")+'</span><span style="min-width:0"><span class="t">'+esc(s.title)+'</span><span class="a">'+esc(s.artist)+'</span></span><span class="meta">'+tag+ICON.chev+'</span></button>'+body+'</li>';
   }).join(""):'<li class="mono" style="padding:14px 4px">no song or word matches “'+esc(query)+'”</li>';
 }
+function showHow(){
+  const sh=$("#sheet");sh.hidden=false;
+  sh.innerHTML='<div class="card tall" role="dialog" aria-label="How XFILES works"><div class="card-top"><div><div class="word">how it works</div><div class="word-en" style="color:var(--muted);font-size:13px">XFILES teaches Spanish through songs.</div></div><button type="button" class="close" id="sh-x" aria-label="Close">'+ICON.x+'</button></div>'+
+  '<ol class="how-list"><li><span><b>Pick a song.</b> Tap it and the lyrics open right there.</span></li><li><span><b>Read along.</b> The English sits under each Spanish line. Tap Translation to hide it and test yourself.</span></li><li><span><b>Tap any word.</b> You get what it means, its tense, the word it comes from and a new sentence using it.</span></li><li><span><b>Tap ▷</b> next to a line to hear it in Spanish.</span></li><li><span><b>Play it on Spotify</b> and sing along while you read.</span></li><li><span><b>Read what it’s about</b> at the end of each song.</span></li><li><span><b>Search</b> for a word to find every line it shows up in.</span></li></ol>'+
+  '<div class="how-notes hand"><p>sit and enjoy</p><p>remember: nada es gratis en la vida</p></div></div>';
+}
 function closeSheet(){const sh=$("#sheet");sh.hidden=true;sh.innerHTML="";document.querySelectorAll(".w[data-on]").forEach(b=>b.removeAttribute("data-on"))}
 function showWord(btn){
   const song=state.songs.find(s=>s.id===openId);if(!song)return;
@@ -285,6 +302,7 @@ document.addEventListener("click",e=>{
   const say=e.target.closest(".say");if(say){speak(say);return}
   const w=e.target.closest(".w");if(w){showWord(w);return}
   if(e.target.closest("#sh-x")){closeSheet();return}
+  if(e.target.closest("#how")){showHow();return}
   if(e.target.closest("#t-mean")){editMean=!editMean;closeSheet();render();if(editMean){const t=$("#m-text");t&&t.focus()}return}
   if(e.target.closest("#m-save")){const song=state.songs.find(x=>x.id===openId);song.meaning=$("#m-text").value.trim();const st=$("#m-status");st.textContent="Saving…";e.target.closest("#m-save").disabled=true;save(st).then(()=>{editMean=false;render()});return}
   if(e.target.closest("#t-edit")){editing=!editing;closeSheet();render();return}
